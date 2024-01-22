@@ -6,6 +6,23 @@
     <title>Document</title>
 </head>
 <body>
+
+    <div>
+        <h1>Calculadora de Edad Promedio</h1>
+    
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre">
+        
+        <label for="edad">Edad:</label>
+        <input type="number" id="edad">
+    
+        <button onclick="agregarPersona()">Confirmar</button>
+        <button onclick="realizarCalculo()">Realizar cálculo</button>
+        <button onclick="resetLocalStorage()">Limpiar Historial</button>
+
+        <div id="resultados"></div>
+      </div>
+
     <script src="script.js"></script>
 </body>
 </html>

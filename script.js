@@ -3,6 +3,18 @@ function Persona(nombre, edad) {
   this.edad = edad;
 }
 
+let personas = cargarPersonasDesdeLocalStorage();
+
+function cargarPersonasDesdeLocalStorage() {
+  const personasGuardadas = localStorage.getItem('personas');
+
+  if (personasGuardadas) {
+    return JSON.parse(personasGuardadas);
+  }
+
+  return [];
+}
+
 function calcularPromedioEdades(personas) {
   let totalEdades = 0;
 
@@ -13,20 +25,9 @@ function calcularPromedioEdades(personas) {
   return totalEdades / personas.length;
 }
 
-function mostrarInformacion(personas, promedio) {
-  console.log("Información de las personas:");
-
-  for (let i = 0; i < personas.length; i++) {
-    console.log(`Nombre: ${personas[i].nombre}, Edad: ${personas[i].edad}`);
-  }
-
-  console.log(`El promedio de edades es: ${promedio}`);
-}
-
 function filtrarPersonasMayores(personas, edadLimite) {
   return personas.filter(persona => persona.edad > edadLimite);
 }
-
 
 function encontrarPersonaMayorEdad(personas) {
   return personas.reduce((personaMayor, personaActual) => {
@@ -34,49 +35,54 @@ function encontrarPersonaMayorEdad(personas) {
   });
 }
 
-function calcularEdadPromedio() {
-  const personas = [];
-  let cantidadPersonas = parseInt(prompt("Ingrese la cantidad de personas que desea ingresar:"));
+function agregarPersona() {
+  const nombreInput = document.querySelector('#nombre');
+  const edadInput = document.querySelector('#edad');
 
-  while (isNaN(cantidadPersonas) || cantidadPersonas <= 0) {
-    alert("Por favor, ingrese un número válido de personas.");
-    cantidadPersonas = parseInt(prompt("Ingrese la cantidad de personas que desea ingresar:"));
+  const nombre = nombreInput.value;
+  const edad = parseInt(edadInput.value);
+
+  if (!nombre || isNaN(edad) || edad <= 0) {
+    alert("Por favor, ingrese datos válidos.");
+    return;
   }
 
-  let continuar;
+  const nuevaPersona = new Persona(nombre, edad);
+  personas.push(nuevaPersona);
 
-  do {
-    let nombre = prompt("Ingrese el nombre de la persona:");
-    let edad;
+  localStorage.setItem('personas', JSON.stringify(personas));
 
-    do {
-      edad = parseInt(prompt("Ingrese la edad de la persona:"));
-
-      if (isNaN(edad) || edad <= 0) {
-        alert("Por favor, ingrese una edad válida.");
-      }
-    } while (isNaN(edad) || edad <= 0);
-
-    const nuevaPersona = new Persona(nombre, edad);
-    personas.push(nuevaPersona);
-
-    if (personas.length === cantidadPersonas) {
-      continuar = false;
-    } else {
-      continuar = confirm("¿Desea ingresar otra persona?");
-    }
-  } while (continuar);
-
-  const promedio = calcularPromedioEdades(personas);
-
-  mostrarInformacion(personas, promedio);
-
-  const personasMayores = filtrarPersonasMayores(personas, 30);
-  console.log("Personas mayores a 30 años:", personasMayores);
-
-
-  const personaMayorEdad = encontrarPersonaMayorEdad(personas);
-  console.log("Persona de mayor edad:", personaMayorEdad);
+  nombreInput.value = '';
+  edadInput.value = '';
 }
 
-calcularEdadPromedio();
+function realizarCalculo() {
+  personas = cargarPersonasDesdeLocalStorage();
+
+  if (personas.length === 0) {
+    alert("Agregue al menos una persona antes de realizar el cálculo.");
+    return;
+  }
+
+  const resultadosDiv = document.getElementById('resultados');
+  resultadosDiv.innerHTML = "<h2>Resultados:</h2>";
+
+  const promedio = calcularPromedioEdades(personas);
+  resultadosDiv.innerHTML += `<p>El promedio de edades es: ${promedio.toFixed(2)}</p>`;
+
+  resultadosDiv.innerHTML += "<h3>Información de las personas:</h3>";
+  for (let i = 0; i < personas.length; i++) {
+    resultadosDiv.innerHTML += `<p>Nombre: ${personas[i].nombre}, Edad: ${personas[i].edad}</p>`;
+  }
+
+  const nombresMayores = filtrarPersonasMayores(personas, 30).map(persona => persona.nombre);
+  resultadosDiv.innerHTML += `<p>Nombres de personas mayores a 30 años: ${JSON.stringify(nombresMayores)}</p>`;
+
+  const personaMayorEdad = encontrarPersonaMayorEdad(personas);
+  resultadosDiv.innerHTML += `<p>Persona de mayor edad: ${JSON.stringify(personaMayorEdad)}</p>`;
+}
+
+function resetLocalStorage() {
+  localStorage.removeItem('personas');
+  alert('Local Storage reseteado.');
+}
