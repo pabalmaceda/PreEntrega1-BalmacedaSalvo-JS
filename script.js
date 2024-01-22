@@ -18,9 +18,9 @@ function cargarPersonasDesdeLocalStorage() {
 function calcularPromedioEdades(personas) {
   let totalEdades = 0;
 
-  for (let i = 0; i < personas.length; i++) {
-    totalEdades += personas[i].edad;
-  }
+  personas.forEach(persona => {
+    totalEdades += persona.edad;
+  });
 
   return totalEdades / personas.length;
 }
@@ -71,9 +71,10 @@ function realizarCalculo() {
   resultadosDiv.innerHTML += `<p>El promedio de edades es: ${promedio.toFixed(2)}</p>`;
 
   resultadosDiv.innerHTML += "<h3>Información de las personas:</h3>";
-  for (let i = 0; i < personas.length; i++) {
-    resultadosDiv.innerHTML += `<p>Nombre: ${personas[i].nombre}, Edad: ${personas[i].edad}</p>`;
-  }
+  personas.forEach(persona => {
+    resultadosDiv.innerHTML += `<p>Nombre: ${persona.nombre}, Edad: ${persona.edad}</p>`;
+  });
+
 
   const nombresMayores = filtrarPersonasMayores(personas, 30).map(persona => persona.nombre);
   resultadosDiv.innerHTML += `<p>Nombres de personas mayores a 30 años: ${JSON.stringify(nombresMayores)}</p>`;
